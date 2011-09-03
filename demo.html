@@ -4,34 +4,66 @@
   <title>Dr.Cal Demo</title>
   <style type="text/css">
 .calendar {
-    border-collapse: collapse;
+  border-collapse: collapse;
+  font-family: sans-serif;
 }
 
 .calendar td {
-    border: 1px solid #AEAEAE;
-    width: 6em;
-    height: 5em;
+  border: 1px solid #AEAEAE;
+  width: 6em;
+  height: 5em;
 }
 
 .calendar td > div {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    cursor: pointer;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
 }
 
-.calendar .today {
-    background-color: #E9EFF8;
+.calendar thead tr:first-child th {
+  font-size: large;
+  padding-bottom: 0.5em;
+}
+
+.calendar thead tr:last-child th {
+  font-weight: normal;
+  font-size: small;
+  color: #939393;
+}
+
+.calendar .prev {
+  float: left;
+}
+
+.calendar .prev:before {
+  content: "<";
+}
+
+.calendar .next {
+  float: right;
+}
+
+.calendar .next:after {
+  content: ">";
+}
+
+.calendar .today, .calendar .today.selected {
+  background-color: #E9EFF8;
+}
+
+.calendar .selected {
+    background-color: #F3F3F3;
 }
 
 .calendar .extra {
-    color: #AEAEAE;
+  color: #AEAEAE;
 }
 
 .calendar .daynum {
-    position: absolute;
-    top: 0.5ex;
-    right: 0.5ex;
+  position: absolute;
+  top: 0.5ex;
+  right: 0.5ex;
 }
   </style>
 </head>
@@ -42,10 +74,16 @@
 (function ($) {
   $(function () {
     var cal = $.drcal();
-    cal.find('td').each(function (_, td) {
-      $(td).append('<div><div class="daynum">' + $(td).attr('day') + '</div></div>');
-    });
+    cal.bind('drcal.monthRender', function () {
+      cal.find('td').each(function (_, td) {
+        $(td).append('<div><div class="daynum">' + $(td).attr('day') + '</div></div>');
+      });
+    }).changeMonth(new Date());
     $('body').append(cal);
+    cal.delegate('td', 'click', function () {
+      cal.find('td').removeClass('selected');
+      $(this).addClass('selected');
+    });
   });
 })(jQuery);
   </script>
