@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dr.Cal Demo</title>
+  <style type="text/css">
+.calendar {
+    border-collapse: collapse;
+}
+
+.calendar td {
+    border: 1px solid #AEAEAE;
+    width: 6em;
+    height: 5em;
+}
+
+.calendar td > div {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+}
+
+.calendar .today {
+    background-color: #E9EFF8;
+}
+
+.calendar .extra {
+    color: #AEAEAE;
+}
+
+.calendar .daynum {
+    position: absolute;
+    top: 0.5ex;
+    right: 0.5ex;
+}
+  </style>
+</head>
+<body>
+  <script src="http://code.jquery.com/jquery-1.6.3.min.js"></script>
+  <script src="drcal.js"></script>
+  <script type="text/javascript">
+(function ($) {
+  $(function () {
+    var cal = $.drcal();
+    cal.find('td').each(function (_, td) {
+      $(td).append('<div><div class="daynum">' + $(td).attr('day') + '</div></div>');
+    });
+    $('body').append(cal);
+  });
+})(jQuery);
+  </script>
+</body>
+</html>
