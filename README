@@ -1,3 +1,3 @@
-Dr.Cal - a minimalistic calendar (not a date picker) - version 0.1
+Dr.Cal - a minimalistic javascript calendar (not a date picker)
 
 Dr.Cal generates a calendar in a <table>. It leaves most of the rest of the work to you.
