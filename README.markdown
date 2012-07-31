@@ -1,4 +1,4 @@
-Dr.Cal - a minimalistic javascript calendar (jQuery plugin)
+Dr.Cal - a minimalistic javascript calendar (not a date picker) - version 1.0
 
 # Features
 
@@ -24,8 +24,8 @@ $('body').append(cal);
 
 # Events
 
-`drcal.monthRender`
- :  triggered when a month is rendered for the first time
+`drcal.weekRender`
+ :  triggered when a month is rendered for the first time; passed the newly rendered tr
 `drcal.monthChange`
  :  triggered every time the month is changed
 

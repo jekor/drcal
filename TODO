@@ -1,0 +1,2 @@
+* Allow weekday names and month names to be passed in as options.
+* Allow for weeks starting on days other than Sunday.

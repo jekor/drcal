@@ -74,11 +74,12 @@
 (function ($) {
   $(function () {
     var cal = $.drcal();
-    cal.bind('drcal.monthRender', function () {
-      cal.find('td').each(function (_, td) {
+    cal.bind('drcal.weekRender', function (_, tr) {
+      $('td', tr).each(function (_, td) {
         $(td).append('<div><div class="daynum">' + $(td).attr('day') + '</div></div>');
       });
-    }).changeMonth(new Date());
+    });
+    cal.changeMonth(new Date());
     $('body').append(cal);
     cal.delegate('td', 'click', function () {
       cal.find('td').removeClass('selected');
