@@ -1,4 +1,4 @@
-// Dr.Cal - a minimalistic javascript calendar (not a date picker) - version 1.0
+// Dr.Cal - a minimalistic javascript calendar (not a date picker) - version 1.1
 
 // Copyright 2011, 2012 Chris Forno
 // Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php).
@@ -17,7 +17,6 @@
 (function ($) {
   var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  var weeks = [];
 
   function pad(n) {
     var n_ = n.toString();
@@ -39,6 +38,7 @@
   }
 
   $.drcal = function (render) {
+    var weeks = [];
     var table = $(
       '<table class="calendar">'
       + '<thead>'

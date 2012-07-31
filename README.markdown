@@ -1,4 +1,4 @@
-Dr.Cal - a minimalistic javascript calendar (not a date picker) - version 1.0
+Dr.Cal - a minimalistic javascript calendar (not a date picker) - version 1.1
 
 # Features
 
