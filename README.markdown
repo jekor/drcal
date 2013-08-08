@@ -41,3 +41,11 @@ First day of the displayed month
  :  `cal.find('[date]:not([class="extra"]):first')`
 Last day of the displayed month
  :  `cal.find('[date]:not([class="extra"]):last')`
+
+# Dependencies
+
+jQuery >= 1.4.3
+
+# License
+
+Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php).
