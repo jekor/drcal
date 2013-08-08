@@ -1,5 +1,7 @@
 Dr.Cal - a minimalistic javascript calendar (not a date picker) - version 1.1
 
+Demo at http://www.minjs.com/#drcal
+
 # Features
 
 Dr.Cal generates a calendar in a `<table>`. It leaves most of the rest of the work to you.
