@@ -1,51 +1,37 @@
-Dr.Cal - a minimalistic javascript calendar (not a date picker) - version 1.1
+# Dr.Cal - A Minimalistic JavaScript Calendar
 
 Demo at http://www.minjs.com/#drcal
 
-# Features
+## Features
 
 Dr.Cal generates a calendar in a `<table>`. It leaves most of the rest of the work to you.
 
-# How to Use
+## How to Use
 
-```
+```JavaScript
 var cal = $.cal(); // returns a <table>
 $('body').append(cal);
 ```
 
-# Functions
+## Functions
 
-`year()`
- :  return the current year (as a 4-digit integer)
-`month()`
- :  return the current month (as an integer in the range [1,12])
-`findCell(date)`
- :  return the cell containing the given JavaScript date
-`changeMonth(date)`
- :  change to the month containing the given JavaScript date
+* `year()` - return the current year (as a 4-digit integer)
+* `month()` - return the current month (as an integer in the range [1,12])
+* `findCell(date)` - return the cell containing the given JavaScript date
+* `changeMonth(date)` - change to the month containing the given JavaScript date
 
-# Events
+## Events
 
-`drcal.weekRender`
- :  triggered when a month is rendered for the first time; passed the newly rendered tr
-`drcal.monthChange`
- :  triggered every time the month is changed
+* `drcal.weekRender` - triggered when a month is rendered for the first time; passed the newly rendered tr
+* `drcal.monthChange` - triggered every time the month is changed
 
-# Tips
+## Tips
 
-First day displayed
- :  `cal.find('[date]:first')`
-Last day displayed
- :  `cal.find('[date]:last')`
-First day of the displayed month
- :  `cal.find('[date]:not([class="extra"]):first')`
-Last day of the displayed month
- :  `cal.find('[date]:not([class="extra"]):last')`
+* First day displayed - `cal.find('[date]:first')`
+* Last day displayed -  `cal.find('[date]:last')`
+* First day of the displayed month - `cal.find('[date]:not([class="extra"]):first')`
+* Last day of the displayed month - `cal.find('[date]:not([class="extra"]):last')`
 
-# Dependencies
+## Dependencies
 
 jQuery >= 1.4.3
-
-# License
-
-Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php).
