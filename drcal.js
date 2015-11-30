@@ -1,10 +1,7 @@
-// Dr.Cal - a minimalistic javascript calendar (not a date picker) - version 1.1
+// Dr.Cal 2.0 - a minimalist javascript calendar (not a date picker)
 
-// Copyright 2011, 2012 Chris Forno
+// Copyright 2011, 2012, 2013, 2014, 2015 Chris Forno
 // Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php).
-
-// Requirements:
-//  * jQuery >= 1.4.3
 
 // Here's the general approach: we build the entire calendar as a single table
 // and then provide a viewport into it (like longtable). This has some
@@ -14,9 +11,22 @@
 //   in order to make the calendar display full weeks) can become normal days
 //   when the month is switched.
 
-(function ($) {
-  var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+// Unsupported browsers:
+// Internet Explorer <= 8
+
+(function () {
+
+  // Fire a custom event named "name" from element "element" with
+  // extra data "data" attached to the details of the event.
+  function customEvent(name, element, data) {
+    if (window.CustomEvent) {
+      var event = new CustomEvent(name, {detail: data});
+    } else {
+      var event = document.createEvent('CustomEvent');
+      event.initCustomEvent(name, true, true, data);
+    }
+    element.dispatchEvent(event);
+  }
 
   function pad(n) {
     var n_ = n.toString();
@@ -27,37 +37,61 @@
     return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
   }
 
-  function renderWeek(date) {
+  function renderWeek(date, table) {
     var day = date;
-    var week = $('<tr></tr>');
-    for (var i = 0; i < 7; i++) {
-      var cell = $('<td date="' + iso8601(day) + '" year="' + day.getFullYear() + '" month="' + (day.getMonth() + 1) + '" day="' + day.getDate() + '"></td>').appendTo(week);
+    var row = document.createElement('tr');
+    for (var i = 1; i <= 7; i++) {
+      var td = document.createElement('td');
+      td.setAttribute('date', iso8601(day));
+      td.setAttribute('year', day.getFullYear());
+      td.setAttribute('month', day.getMonth() + 1);
+      td.setAttribute('day', day.getDate());
+      row.appendChild(td);
+      customEvent('drcal.renderDay', table, {'element': td,
+                                             'date': day});
       day = new Date(day.getTime() + 86400000);
     }
-    return week;
+    return row;
   }
 
-  $.drcal = function (render) {
-    var weeks = [];
-    var table = $(
-      '<table class="calendar">'
-      + '<thead>'
-        + '<tr>'
-          + '<th colspan="7">'
-            + '<button class="prev"></button>'
-            + '<span class="monthyear"></span>'
-            + '<button class="next"></button>'
-          + '</th>'
-        + '</tr>'
-      + '</thead>'
-      + '<tbody></tbody>'
-    + '</table>');
+  window.drcal = function (options) {
+    var weekdays = options !== undefined && 'weekdays' in options ? options.weekdays :
+      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var months = options !== undefined && 'months' in options ? options.months :
+      ['January', 'February', 'March', 'April', 'May', 'June',
+       'July', 'August', 'September', 'October', 'November', 'December'];;
 
-    $('<tr>' + $.map(weekdays, function (x) {return '<th>' + x + '</th>'}).join('') + '</tr>').appendTo(table.find('thead'));
+    var weeks = []; // cache
 
-    table.year = function () {return table.attr('year') ? parseInt(table.attr('year'), 10) : null;};
-    table.month = function () {return table.attr('month') ? parseInt(table.attr('month'), 10) : null;};
-    table.findCell = function (date) {return table.find('[date="' + iso8601(date) + '"]');};
+    var prev = document.createElement('button');
+    prev.className = 'prev';
+    var next = document.createElement('button');
+    next.className = 'next';
+    var monthyear = document.createElement('span');
+    monthyear.className = 'monthyear';
+    var monthHeader = document.createElement('th');
+    monthHeader.colSpan = 7;
+    monthHeader.appendChild(prev);
+    monthHeader.appendChild(monthyear);
+    monthHeader.appendChild(next);
+
+    var weekdayHeader = document.createElement('tr');
+    for (var i = 0; i < weekdays.length; i++) {
+      var th = document.createElement('th');
+      th.appendChild(document.createTextNode(weekdays[i]));
+      weekdayHeader.appendChild(th);
+    }
+
+    var table = document.createElement('table');
+    table.className = 'calendar';
+    table.createTHead().insertRow().appendChild(monthHeader);
+    table.createTHead().appendChild(weekdayHeader);
+    var tbody = document.createElement('tbody')
+    table.appendChild(tbody);
+
+    table.year = function () {return table.getAttribute('year') ? parseInt(table.getAttribute('year'), 10) : null;};
+    table.month = function () {return table.getAttribute('month') ? parseInt(table.getAttribute('month'), 10) : null;};
+    table.findCell = function (date) {return table.querySelector('[date="' + iso8601(date) + '"]');};
     table.changeMonth = function (date) {
       // Find the week that this month begins on.
       var first = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -68,46 +102,45 @@
       var year = date.getFullYear();
       var month = date.getMonth();
 
-      // Detach any existing weeks.
-      $('tbody > tr', table).detach();
+      // Remove any existing weeks from the table body.
+      while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+      }
       do {
         // If this month has already been rendered in the cache, use it.
         var tr = weeks[iso8601(week)];
-        var rendered = false;
         if (!tr) { // Render.
-          rendered = true;
-          tr = renderWeek(week);
+          tr = renderWeek(week, table);
           weeks[iso8601(week)] = tr;
         }
         // Either way, we need to run through each day and set some classes.
-        $('td', tr).each(function (_, td) {
-          $(td).removeClass('today').removeClass('extra');
-          if ($(td).attr('date') === iso8601(today)) {
-            $(td).addClass('today');
-          }
-          if ($(td).attr('month') != month + 1) {
-            $(td).addClass('extra');
-          }
-        });
-        $('tbody', table).append(tr);
-        if (rendered) {
-          table.trigger('drcal.weekRender', [tr]);
+        for (var i = 0; i < tr.children.length; i++) {
+          tr.children[i].className = tr.children[i].getAttribute('month') == month + 1 ? 'current' : 'extra'
+          tr.children[i].className += tr.children[i].getAttribute('date') === iso8601(today) ? ' today' : ''
         }
+        table.tBodies[0].appendChild(tr);
+        
         week = new Date(week.getTime() + 86400000 * 7);
       } while (week.getMonth() === date.getMonth());
-      table.attr('year', year);
-      table.attr('month', month + 1);
-      table.find('.monthyear').empty().append(months[month] + ' ' + year);
-      table.trigger('drcal.monthChange', []);
+
+      table.setAttribute('year', year);
+      table.setAttribute('month', month + 1);
+
+      while (monthyear.firstChild) {
+        monthyear.removeChild(monthyear.firstChild);
+      }
+      monthyear.appendChild(document.createTextNode(months[month] + ' ' + year));
+      
+      customEvent('drcal.monthChange', table, {});
     };
 
-    table.find('button.prev').click(function () {
+    prev.addEventListener('click', function () {
       table.changeMonth(new Date(table.year() - (table.month() === 1  ? 1 : 0), table.month() === 1 ? 11 : table.month() - 2, 1));
     });
-    table.find('button.next').click(function () {
+    next.addEventListener('click', function () {
       table.changeMonth(new Date(table.year() + (table.month() === 12 ? 1 : 0), table.month() === 12 ? 0 : table.month(), 1));
     });
 
     return table;
   };
-})(jQuery);
+})();

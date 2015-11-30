@@ -12,6 +12,7 @@
   border: 1px solid #AEAEAE;
   width: 6em;
   height: 5em;
+  padding: 0;
 }
 
 .calendar td > div {
@@ -68,25 +69,28 @@
   </style>
 </head>
 <body>
-  <script src="http://code.jquery.com/jquery-1.6.3.min.js"></script>
   <script src="drcal.js"></script>
   <script type="text/javascript">
-(function ($) {
-  $(function () {
-    var cal = $.drcal();
-    cal.bind('drcal.weekRender', function (_, tr) {
-      $('td', tr).each(function (_, td) {
-        $(td).append('<div><div class="daynum">' + $(td).attr('day') + '</div></div>');
-      });
+    var cal = drcal();
+    cal.addEventListener('drcal.renderDay', function (event) {
+      var dayNum = document.createElement('div');
+      dayNum.className = 'daynum';
+      dayNum.appendChild(document.createTextNode(event.detail.date.getDate()));
+      var div = document.createElement('div');
+      div.appendChild(dayNum);
+      event.detail.element.appendChild(div);
     });
     cal.changeMonth(new Date());
-    $('body').append(cal);
-    cal.delegate('td', 'click', function () {
-      cal.find('td').removeClass('selected');
-      $(this).addClass('selected');
+    selected = null;
+    cal.addEventListener('click', function (event) {
+      if (event.target.tagName === 'DIV') {
+        event.preventDefault();
+        if (selected) selected.className = '';
+        selected = event.target;
+        selected.className = 'selected';
+      }
     });
-  });
-})(jQuery);
+    document.body.appendChild(cal);
   </script>
 </body>
 </html>
