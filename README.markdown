@@ -23,32 +23,58 @@ var cal = drcal({'weekdays': ['日', '一', '二', '三', '四', '五', '六'],
                             '7月', '8月', '9月', '10月', '11月', '12月']});
 ```
 
-## Functions
+To start weeks on Monday, pass `1` as the option `startDay`.
 
-* `year()` - return the current year (as a 4-digit integer)
-* `month()` - return the current month (as an integer in the range [1,12])
-* `findCell(date)` - return the cell containing the given JavaScript date
-* `changeMonth(date)` - change to the month containing the given JavaScript date
+```JavaScript
+var cal = drcal({'startDay': 1});
+```
 
-## Events
+No matter which day you choose to start the week, if you pass weekday names they must start on Sunday. This is because JavaScript considers weeks to begin on Sunday (day 0) and end on Saturday (day 6). Sticking to this representation internally allows us to keep the code simple. So to combine the above options:
 
-* `drcal.renderDay` - triggered when a day is rendered for the first time
-* `drcal.monthChange` - triggered every time the month is changed
+```JavaScript
+var cal = drcal({'weekdays': ['日', '一', '二', '三', '四', '五', '六'],
+                 'months': ['1月', '2月', '3月', '4月', '5月', '6月',
+                            '7月', '8月', '9月', '10月', '11月', '12月'],
+                 'startDay': 1});
+```
 
 ## Rendering
 
-Dr.Cal renders a basic table and attaches some attributes to each day (a table cell (`<td>`)). The contents of the cell are up to you. The event's detail will contain:
-
-* `element` - the `<td>`/date DOM element that we're rendering
-* `date` - the JavaScript date for the date we're rendering
-
-For example, to add the day number to each cell that's rendered:
+Dr.Cal renders a basic table and attaches some attributes to each day (a table cell (`<td>`)). The contents of the cell are up to you. To add anything extra, you can hook into the `drcal.renderDay` event. For example, to add the day number to each cell that's rendered:
 
 ```JavaScript
 cal.addEventListener('drcal.renderDay', function (event) {
   event.detail.element.appendChild(document.createTextNode(event.detail.date.getDate()));
 });
 ```
+
+The event's detail will contain:
+
+* `element` - the `<td>`/date DOM element that we're rendering
+* `date` - the JavaScript date for the date we're rendering
+
+## Functions
+
+The table returned by `drcal()` also has some helper functions:
+
+* `year()` - return the current year (as a 4-digit integer)
+* `month()` - return the current month (as an integer in the range [1,12])
+* `findCell(date)` - return the cell containing the given JavaScript date
+* `changeMonth(date)` - change to the month containing the given JavaScript date
+
+For example, to get the current month that is being displayed:
+
+```JavaScript
+var cal = drcal();
+console.log(cal.month());
+```
+
+## Events
+
+You can also listen for these events:
+
+* `drcal.renderDay` - fired when a day is rendered for the first time
+* `drcal.monthChange` - fired every time the month is changed
 
 ## Tips
 

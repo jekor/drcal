@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Dr.Cal Demo</title>
+  <meta charset="utf-8">
   <style type="text/css">
 .calendar {
   border-collapse: collapse;
@@ -71,26 +72,45 @@
 <body>
   <script src="drcal.js"></script>
   <script type="text/javascript">
+    // default calendar
     var cal = drcal();
-    cal.addEventListener('drcal.renderDay', function (event) {
-      var dayNum = document.createElement('div');
-      dayNum.className = 'daynum';
-      dayNum.appendChild(document.createTextNode(event.detail.date.getDate()));
-      var div = document.createElement('div');
-      div.appendChild(dayNum);
-      event.detail.element.appendChild(div);
-    });
-    cal.changeMonth(new Date());
-    selected = null;
-    cal.addEventListener('click', function (event) {
-      if (event.target.tagName === 'DIV') {
-        event.preventDefault();
-        if (selected) selected.className = '';
-        selected = event.target;
-        selected.className = 'selected';
-      }
-    });
-    document.body.appendChild(cal);
+    displayCalendar(cal, 'JS');
+
+    // weeks start on Monday
+    var cal = drcal({'startDay': 1});
+    displayCalendar(cal, 'ISO');
+
+    // 中文
+    var cal = drcal({'weekdays': ['日', '一', '二', '三', '四', '五', '六'],
+                     'months': ['1月', '2月', '3月', '4月', '5月', '6月',
+                                '7月', '8月', '9月', '10月', '11月', '12月'],
+                     'startDay' : 1});
+    displayCalendar(cal, '中国');
+
+    function displayCalendar(cal, title) {
+      cal.addEventListener('drcal.renderDay', function (event) {
+        var dayNum = document.createElement('div');
+        dayNum.className = 'daynum';
+        dayNum.appendChild(document.createTextNode(event.detail.date.getDate()));
+        var div = document.createElement('div');
+        div.appendChild(dayNum);
+        event.detail.element.appendChild(div);
+      });
+      cal.changeMonth(new Date());
+      selected = null;
+      cal.addEventListener('click', function (event) {
+        if (event.target.tagName === 'DIV') {
+          event.preventDefault();
+          if (selected) selected.className = '';
+          selected = event.target;
+          selected.className = 'selected';
+        }
+      });
+      var header = document.createElement('h2');
+      header.appendChild(document.createTextNode(title));
+      document.body.appendChild(header);
+      document.body.appendChild(cal);
+    }
   </script>
 </body>
 </html>

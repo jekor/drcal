@@ -1,4 +1,4 @@
-// Dr.Cal 2.0 - a minimalist javascript calendar (not a date picker)
+// Dr.Cal 2.1 - a minimalist javascript calendar (not a date picker)
 
 // Copyright 2011, 2012, 2013, 2014, 2015 Chris Forno
 // Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php).
@@ -37,7 +37,7 @@
     return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
   }
 
-  function renderWeek(date, table) {
+  function renderWeek(date, table, startDay) {
     var day = date;
     var row = document.createElement('tr');
     for (var i = 1; i <= 7; i++) {
@@ -45,7 +45,7 @@
       td.setAttribute('date', iso8601(day));
       td.setAttribute('year', day.getFullYear());
       td.setAttribute('month', day.getMonth() + 1);
-      td.setAttribute('day', day.getDate());
+      td.setAttribute('day', day.getDate() + startDay);
       row.appendChild(td);
       customEvent('drcal.renderDay', table, {'element': td,
                                              'date': day});
@@ -60,6 +60,7 @@
     var months = options !== undefined && 'months' in options ? options.months :
       ['January', 'February', 'March', 'April', 'May', 'June',
        'July', 'August', 'September', 'October', 'November', 'December'];;
+    var startDay = options !== undefined && 'startDay' in options ? options.startDay : 0;
 
     var weeks = []; // cache
 
@@ -78,7 +79,7 @@
     var weekdayHeader = document.createElement('tr');
     for (var i = 0; i < weekdays.length; i++) {
       var th = document.createElement('th');
-      th.appendChild(document.createTextNode(weekdays[i]));
+      th.appendChild(document.createTextNode(weekdays[(i + startDay) % weekdays.length]));
       weekdayHeader.appendChild(th);
     }
 
@@ -95,7 +96,7 @@
     table.changeMonth = function (date) {
       // Find the week that this month begins on.
       var first = new Date(date.getFullYear(), date.getMonth(), 1);
-      var weekStart = new Date(first.getTime() - (first.getDay() * 86400000));
+      var weekStart = new Date(first.getTime() - ((first.getDay() - startDay) * 86400000));
       var week = weekStart;
       var now = new Date();
       var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -107,10 +108,10 @@
         tbody.removeChild(tbody.firstChild);
       }
       do {
-        // If this month has already been rendered in the cache, use it.
+        // If this week has already been rendered in the cache, use it.
         var tr = weeks[iso8601(week)];
         if (!tr) { // Render.
-          tr = renderWeek(week, table);
+          tr = renderWeek(week, table, startDay);
           weeks[iso8601(week)] = tr;
         }
         // Either way, we need to run through each day and set some classes.
