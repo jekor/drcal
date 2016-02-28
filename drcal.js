@@ -49,7 +49,8 @@
       row.appendChild(td);
       customEvent('drcal.renderDay', table, {'element': td,
                                              'date': day});
-      day = new Date(day.getTime() + 86400000);
+      day = new Date(day);
+      day.setDate(day.getDate() + 1);
     }
     return row;
   }
@@ -99,7 +100,8 @@
       var dif = first.getDay() - startDay;
       if (dif < 0)
         dif += 7;
-      var weekStart = new Date(first.getTime() - (dif * 86400000));
+      var weekStart = new Date(first);
+      weekStart.setDate(weekStart.getDate() - dif);
       var week = weekStart;
       var now = new Date();
       var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -124,7 +126,8 @@
         }
         table.tBodies[0].appendChild(tr);
         
-        week = new Date(week.getTime() + 86400000 * 7);
+        week = new Date(week);
+        week.setDate(week.getDate() + 7);
       } while (week.getMonth() === date.getMonth());
 
       table.setAttribute('year', year);
