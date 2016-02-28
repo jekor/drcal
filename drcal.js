@@ -37,7 +37,7 @@
     return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
   }
 
-  function renderWeek(date, table, startDay) {
+  function renderWeek(date, table) {
     var day = date;
     var row = document.createElement('tr');
     for (var i = 1; i <= 7; i++) {
@@ -45,11 +45,12 @@
       td.setAttribute('date', iso8601(day));
       td.setAttribute('year', day.getFullYear());
       td.setAttribute('month', day.getMonth() + 1);
-      td.setAttribute('day', day.getDate() + startDay);
+      td.setAttribute('day', day.getDate());
       row.appendChild(td);
       customEvent('drcal.renderDay', table, {'element': td,
                                              'date': day});
-      day = new Date(day.getTime() + 86400000);
+      day = new Date(day);
+      day.setDate(day.getDate() + 1);
     }
     return row;
   }
@@ -96,7 +97,11 @@
     table.changeMonth = function (date) {
       // Find the week that this month begins on.
       var first = new Date(date.getFullYear(), date.getMonth(), 1);
-      var weekStart = new Date(first.getTime() - ((first.getDay() - startDay) * 86400000));
+      var dif = first.getDay() - startDay;
+      if (dif < 0)
+        dif += 7;
+      var weekStart = new Date(first);
+      weekStart.setDate(weekStart.getDate() - dif);
       var week = weekStart;
       var now = new Date();
       var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -111,7 +116,7 @@
         // If this week has already been rendered in the cache, use it.
         var tr = weeks[iso8601(week)];
         if (!tr) { // Render.
-          tr = renderWeek(week, table, startDay);
+          tr = renderWeek(week, table);
           weeks[iso8601(week)] = tr;
         }
         // Either way, we need to run through each day and set some classes.
@@ -121,7 +126,8 @@
         }
         table.tBodies[0].appendChild(tr);
         
-        week = new Date(week.getTime() + 86400000 * 7);
+        week = new Date(week);
+        week.setDate(week.getDate() + 7);
       } while (week.getMonth() === date.getMonth());
 
       table.setAttribute('year', year);
