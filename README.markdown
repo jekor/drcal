@@ -83,4 +83,4 @@ You can also listen for these events:
 
 ## Unsupported Browsers
 
-* Internet Explorer <= 8
+* Internet Explorer <= 9

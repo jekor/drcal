@@ -19,13 +19,14 @@
   // Fire a custom event named "name" from element "element" with
   // extra data "data" attached to the details of the event.
   function customEvent(name, element, data) {
-    if (window.CustomEvent) {
-      var event = new CustomEvent(name, {detail: data});
-    } else {
-      var event = document.createEvent('CustomEvent');
-      event.initCustomEvent(name, true, true, data);
+    var evt;
+    try {
+      evt = new CustomEvent(name, {detail: data});
+    } catch(e) {
+      evt = document.createEvent('CustomEvent');
+      evt.initCustomEvent(name, true, true, data);
     }
-    element.dispatchEvent(event);
+    element.dispatchEvent(evt);
   }
 
   function pad(n) {
