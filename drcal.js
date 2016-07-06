@@ -68,8 +68,10 @@
 
     var prev = document.createElement('button');
     prev.className = 'prev';
+    prev.setAttribute('aria-label', 'Previous month');
     var next = document.createElement('button');
     next.className = 'next';
+    next.setAttribute('aria-label', 'Next month');
     var monthyear = document.createElement('span');
     monthyear.className = 'monthyear';
     var monthHeader = document.createElement('th');
