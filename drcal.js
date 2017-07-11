@@ -111,6 +111,11 @@
       var year = date.getFullYear();
       var month = date.getMonth();
 
+      table.setAttribute('year', year);
+      table.setAttribute('month', month + 1);
+
+      customEvent('drcal.monthChange', table, {});
+
       // Remove any existing weeks from the table body.
       while (tbody.firstChild) {
         tbody.removeChild(tbody.firstChild);
@@ -133,15 +138,10 @@
         week.setDate(week.getDate() + 7);
       } while (week.getMonth() === date.getMonth());
 
-      table.setAttribute('year', year);
-      table.setAttribute('month', month + 1);
-
       while (monthyear.firstChild) {
         monthyear.removeChild(monthyear.firstChild);
       }
       monthyear.appendChild(document.createTextNode(months[month] + ' ' + year));
-      
-      customEvent('drcal.monthChange', table, {});
     };
 
     prev.addEventListener('click', function () {
