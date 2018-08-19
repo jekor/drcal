@@ -81,9 +81,9 @@
     monthHeader.appendChild(next);
 
     var weekdayHeader = document.createElement('tr');
-    for (var i = 0; i < weekdays.length; i++) {
+    for (var i = 0, j = weekdays.length; i < j; i++) {
       var th = document.createElement('th');
-      th.appendChild(document.createTextNode(weekdays[(i + startDay) % weekdays.length]));
+      th.appendChild(document.createTextNode(weekdays[(i + startDay) % j]));
       weekdayHeader.appendChild(th);
     }
 
@@ -128,7 +128,7 @@
           weeks[iso8601(week)] = tr;
         }
         // Either way, we need to run through each day and set some classes.
-        for (var i = 0; i < tr.children.length; i++) {
+        for (var i = 0, j = tr.children.length; i < j; i++) {
           tr.children[i].className = tr.children[i].getAttribute('month') == month + 1 ? 'current' : 'extra'
           tr.children[i].className += tr.children[i].getAttribute('date') === iso8601(today) ? ' today' : ''
         }
